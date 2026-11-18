@@ -16,8 +16,17 @@ GET http://localhost:8080/api/qr-codes
 ### 4. ГЛАВНАЯ ФИЧА: Успешный вход Иванова по активному одноразовому QR-коду (вернёт ФИО и новый UUID!)
 POST http://localhost:8080/api/access/enter/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
 
-### 5. ПОВТОРНЫЙ ВХОД ПО ТОМУ ЖЕ QR-КОДУ (должен вернуть 403 Forbidden — код уже сгорел!)
+### 5. ПОВТОРНЫЙ ВХОД ПО ТОМУ ЖЕ QR-КОДУ (должен вернуть 403 Forbidden - код уже сгорел!)
 POST http://localhost:8080/api/access/enter/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
 
 ### 6. Вход по несуществующему UUID (должен вернуть 404 Not Found)
 POST http://localhost:8080/api/access/enter/99999999-9999-9999-9999-999999999999
+
+### 7. Попытка воскресить сгоревший QR-код (должен вернуть 400 Bad Request)
+PUT http://localhost:8080/api/qr-codes/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
+Content-Type: application/json
+
+{
+  "active": true
+}
+

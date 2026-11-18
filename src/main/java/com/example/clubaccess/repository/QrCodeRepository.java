@@ -17,4 +17,6 @@ public interface QrCodeRepository extends JpaRepository<QrCode, UUID> {
     Optional<QrCode> findByIdWithMember(@Param("id") UUID id);
 
     List<QrCode> findAllByMemberId(UUID memberId);
+
+    List<QrCode> findAllByMemberIdAndActiveTrue(UUID memberId);
 }

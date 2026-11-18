@@ -29,10 +29,18 @@ public class QrCodeService {
             throw new IllegalArgumentException("Необходимо указать memberId участника");
         }
         Member member = memberService.findEntityById(dto.memberId());
-        QrCode qrCode = new QrCode(member);
-        if (dto.active() != null) {
-            qrCode.setActive(dto.active());
+        boolean isNewActive = dto.active() != null ? dto.active() : true;
+
+        if (isNewActive) {
+            List<QrCode> activeCodes = qrCodeRepository.findAllByMemberIdAndActiveTrue(member.getId());
+            for (QrCode oldCode : activeCodes) {
+                oldCode.setActive(false);
+            }
+            qrCodeRepository.saveAll(activeCodes);
         }
+
+        QrCode qrCode = new QrCode(member);
+        qrCode.setActive(isNewActive);
         return toDto(qrCodeRepository.save(qrCode));
     }
 
@@ -54,13 +62,18 @@ public class QrCodeService {
     public QrCodeResponseDto updateQrCode(UUID id, QrCodeRequestDto dto) {
         QrCode qrCode = qrCodeRepository.findByIdWithMember(id)
                 .orElseThrow(() -> new ResourceNotFoundException("QR-код " + id + " не найден"));
-        if (dto.memberId() != null) {
-            Member newMember = memberService.findEntityById(dto.memberId());
-            qrCode.setMember(newMember);
+
+        if (dto.memberId() != null && !dto.memberId().equals(qrCode.getMember().getId())) {
+            throw new IllegalArgumentException("Нельзя изменить владельца уже созданного QR-кода");
         }
+
         if (dto.active() != null) {
+            if (!qrCode.isActive() && dto.active()) {
+                throw new IllegalArgumentException("Нельзя повторно активировать уже использованный QR-код");
+            }
             qrCode.setActive(dto.active());
         }
+
         return toDto(qrCodeRepository.save(qrCode));
     }
 
