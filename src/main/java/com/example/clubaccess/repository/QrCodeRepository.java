@@ -13,6 +13,9 @@ import java.util.UUID;
 @Repository
 public interface QrCodeRepository extends JpaRepository<QrCode, UUID> {
 
+    @Query("SELECT q FROM QrCode q JOIN FETCH q.member")
+    List<QrCode> findAllWithMember();
+
     @Query("SELECT q FROM QrCode q JOIN FETCH q.member WHERE q.id = :id")
     Optional<QrCode> findByIdWithMember(@Param("id") UUID id);
 

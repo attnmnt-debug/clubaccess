@@ -46,10 +46,11 @@ public class QrCodeService {
 
     @Transactional(readOnly = true)
     public List<QrCodeResponseDto> getAllQrCodes() {
-        return qrCodeRepository.findAll().stream()
+        return qrCodeRepository.findAllWithMember().stream()
                 .map(this::toDto)
                 .toList();
     }
+
 
     @Transactional(readOnly = true)
     public QrCodeResponseDto getQrCodeById(UUID id) {

@@ -11,5 +11,5 @@ services:
     volumes:
       - club_postgres_data:/var/lib/postgresql/data
 
-  volumes:
-    club_postgres_data:
+volumes:
+  club_postgres_data:
